@@ -27,9 +27,21 @@ export const Login = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = (values) => {
-    dispatch(fetchAuth(values));
+  const onSubmit = async (values) => {
+    const data = await dispatch(fetchAuth(values));
+
+    if (!data.payload) {
+      return alert('Authorization Failed');
+    }
+
+    if ('token' in data.payload) {
+      window.localStorage.setItem('token', data.payload.token);
+    } else {
+      alert('Authorization failed');
+    }
   };
+
+  React.useEffect(() => {}, []);
 
   if (isAuth) {
     return <Navigate to="/" />;
