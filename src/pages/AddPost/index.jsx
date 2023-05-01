@@ -8,17 +8,19 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 import { selectIsAuth } from '../../redux/slices/auth';
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from '../../axios';
 
 export const AddPost = () => {
+  const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
 
   const [fields, setFields] = React.useState({
-    value: '',
+    text: '',
     title: '',
     tags: '',
     imageUrl: '',
+    isLoading: false,
   });
 
   const inputFileRef = React.useRef(null);
@@ -36,14 +38,33 @@ export const AddPost = () => {
     }
   };
 
-  const onClickRemoveImage = async (event) => {};
+  const onClickRemoveImage = () => {
+    if (window.confirm('Are you sure you want to remove image?')) {
+      setFields({ ...fields, imageUrl: '' });
+    }
+  };
 
   const onChange = React.useCallback(
     (value) => {
-      setFields({ ...fields, value });
+      setFields({ ...fields, text: value });
     },
     [fields],
   );
+
+  const onSubmit = async () => {
+    try {
+      setFields({ ...fields, isLoading: true });
+
+      const splittedTags = fields.tags.split(', ');
+      const { data } = await axios.post('/posts', { ...fields, tags: splittedTags });
+
+      const id = data._id;
+      navigate(`/posts/${id}`);
+    } catch (error) {
+      console.warn(error);
+      alert('An error has been occurred when creating post');
+    }
+  };
 
   const options = React.useMemo(
     () => ({
@@ -98,19 +119,19 @@ export const AddPost = () => {
       <TextField
         classes={{ root: styles.tags }}
         variant="standard"
-        placeholder="Tags"
+        placeholder="Tags,     please write it like:   'tag1, tag2, ...'"
         value={fields.tags}
         onChange={(e) => setFields({ ...fields, tags: e.target.value })}
         fullWidth
       />
       <SimpleMDE
         className={styles.editor}
-        value={fields.value}
+        value={fields.text}
         onChange={onChange}
         options={options}
       />
       <div className={styles.buttons}>
-        <Button size="large" variant="contained">
+        <Button onClick={onSubmit} size="large" variant="contained">
           Publish
         </Button>
         <a href="/">
