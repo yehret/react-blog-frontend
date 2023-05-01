@@ -8,10 +8,11 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 import { selectIsAuth } from '../../redux/slices/auth';
 import { useSelector } from 'react-redux';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from '../../axios';
 
 export const AddPost = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
 
@@ -22,6 +23,8 @@ export const AddPost = () => {
     imageUrl: '',
     isLoading: false,
   });
+
+  const isEditing = Boolean(id);
 
   const inputFileRef = React.useRef(null);
 
@@ -56,15 +59,37 @@ export const AddPost = () => {
       setFields({ ...fields, isLoading: true });
 
       const splittedTags = fields.tags.split(', ');
-      const { data } = await axios.post('/posts', { ...fields, tags: splittedTags });
+      const { data } = isEditing
+        ? await axios.patch(`/posts/${id}`, { ...fields, tags: splittedTags })
+        : await axios.post('/posts', { ...fields, tags: splittedTags });
 
-      const id = data._id;
-      navigate(`/posts/${id}`);
+      const _id = isEditing ? id : data._id;
+      navigate(`/posts/${_id}`);
     } catch (error) {
       console.warn(error);
       alert('An error has been occurred when creating post');
     }
   };
+
+  React.useEffect(() => {
+    if (id) {
+      axios
+        .get(`/posts/${id}`)
+        .then((res) => {
+          setFields({
+            text: res.data.text,
+            title: res.data.title,
+            tags: res.data.tags.join(', '),
+            imageUrl: res.data.imageUrl,
+          });
+        })
+        .catch((err) => {
+          console.warn(err);
+          alert('Error: ' + err.message);
+        });
+      console.log(fields);
+    }
+  }, [id]);
 
   const options = React.useMemo(
     () => ({
@@ -132,7 +157,7 @@ export const AddPost = () => {
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">
-          Publish
+          {isEditing ? 'Save' : 'Publish'}
         </Button>
         <a href="/">
           <Button size="large">Cancel</Button>
