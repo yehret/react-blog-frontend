@@ -14,8 +14,13 @@ export const Home = () => {
   const { posts, tags } = useSelector((state) => state.posts);
   const userData = useSelector((state) => state.auth.data);
 
-  // const comments = posts.items[0].comments;
-  // console.log(comments);
+  const allComments = posts.items.flatMap((post) => {
+    if (post.comments && Array.isArray(post.comments)) {
+      return post.comments;
+    } else {
+      return [];
+    }
+  });
 
   const isPostsLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
@@ -55,7 +60,7 @@ export const Home = () => {
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} />
 
-          <CommentsBlock items={posts.items[0].comments} isLoading={false} />
+          <CommentsBlock items={allComments ? allComments : [...Array(5)]} isLoading={false} />
         </Grid>
       </Grid>
     </>
