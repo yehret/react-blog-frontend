@@ -8,11 +8,15 @@ import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { fetchPosts, fetchTags } from '../redux/slices/posts';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { posts, tags } = useSelector((state) => state.posts);
   const userData = useSelector((state) => state.auth.data);
+
+  const [sortValue, setValue] = React.useState(0);
 
   const allComments = posts.items.flatMap((post) => {
     if (post.comments && Array.isArray(post.comments)) {
@@ -26,15 +30,24 @@ export const Home = () => {
   const isTagsLoading = tags.status === 'loading';
 
   React.useEffect(() => {
-    dispatch(fetchPosts());
+    sortValue ? dispatch(fetchPosts('?sort=views')) : dispatch(fetchPosts());
     dispatch(fetchTags());
-  }, [dispatch]);
+  }, [dispatch, sortValue]);
+
+  const handleChange = (_e, newValue) => {
+    setValue(newValue);
+  };
 
   return (
     <>
-      <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
-        <Tab label="New" />
-        <Tab label="Popular" />
+      <Tabs
+        value={sortValue}
+        onChange={handleChange}
+        style={{ marginBottom: 15 }}
+        aria-label="basic tabs example"
+      >
+        <Tab label="New" index={0} />
+        <Tab label="Popular" index={1} />
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
