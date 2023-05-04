@@ -65,7 +65,7 @@ export const Home = () => {
                 viewsCount={obj.viewsCount}
                 commentsCount={obj.comments ? obj.comments.length : 0}
                 tags={obj.tags}
-                isEditable={userData?._id === obj.user._id}
+                isEditable={userData?._id === obj.user}
               />
             ),
           )}
