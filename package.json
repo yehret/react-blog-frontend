@@ -24,6 +24,7 @@
     "react-scripts": "5.0.1",
     "react-simplemde-editor": "^5.0.2",
     "sass": "^1.52.1",
+    "timeago.js": "^4.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

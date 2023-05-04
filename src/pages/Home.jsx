@@ -9,6 +9,7 @@ import { CommentsBlock } from '../components/CommentsBlock';
 import { fetchPosts, fetchTags } from '../redux/slices/posts';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { format } from 'timeago.js';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -61,7 +62,7 @@ export const Home = () => {
                 title={obj.title}
                 imageUrl={obj.imageUrl ? `${process.env.REACT_APP_API_URL}${obj.imageUrl}` : ''}
                 user={obj.user}
-                createdAt={obj.createdAt}
+                createdAt={format(obj.createdAt)}
                 viewsCount={obj.viewsCount}
                 commentsCount={obj.comments ? obj.comments.length : 0}
                 tags={obj.tags}
