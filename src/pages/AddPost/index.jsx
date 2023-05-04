@@ -33,7 +33,7 @@ export const AddPost = () => {
       const formData = new FormData();
       const file = event.target.files[0];
       formData.append('image', file);
-      const { data } = await axios.post('/upload', formData);
+      const { data } = await axios.post('https://serge-blog.onrender.com/upload', formData);
       setFields({ ...fields, imageUrl: data.url });
     } catch (error) {
       console.warn(error);
@@ -124,7 +124,7 @@ export const AddPost = () => {
 
           <img
             className={styles.image}
-            src={`http://localhost:4444${fields.imageUrl}`}
+            src={`${process.env.REACT_APP_API_URL}${fields.imageUrl}`}
             alt="Uploaded"
           />
         </>
