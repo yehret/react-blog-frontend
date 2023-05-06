@@ -60,11 +60,7 @@ export const Home = () => {
                 key={index}
                 id={obj._id}
                 title={obj.title}
-                imageUrl={
-                  obj.imageUrl
-                    ? `${process.env.REACT_APP_API_URL}${obj.imageUrl}`
-                    : 'https://cat-world.com/wp-content/uploads/2021/03/maine-coon1.jpg'
-                }
+                imageUrl={obj.imageUrl ? `${process.env.REACT_APP_API_URL}${obj.imageUrl}` : ''}
                 user={obj.user}
                 createdAt={format(obj.createdAt)}
                 viewsCount={obj.viewsCount}
