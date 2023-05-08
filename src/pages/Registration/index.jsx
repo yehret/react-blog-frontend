@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import styles from './Login.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { fetchRegister, selectIsAuth } from '../../redux/slices/auth';
+import { fetchAuthMe, fetchRegister, selectIsAuth } from '../../redux/slices/auth';
 import { Navigate } from 'react-router-dom';
 
 export const Registration = () => {
@@ -43,6 +43,7 @@ export const Registration = () => {
   React.useEffect(() => {}, []);
 
   if (isAuth) {
+    dispatch(fetchAuthMe());
     return <Navigate to="/" />;
   }
 
